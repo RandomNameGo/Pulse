@@ -33,8 +33,8 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
-                        .requestMatchers("pulse/api/v1/auth/**").permitAll()
-                        .requestMatchers("pulse/api/v1/user/**").permitAll()
+                        .requestMatchers("/pulse/api/v1/auth/**").permitAll()
+                        .requestMatchers("/pulse/api/v1/user/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder()).
