@@ -30,6 +30,7 @@ public class AuthServiceImpl implements AuthService {
 
         if(passwordEncoder.matches(loginRequest.getPassword(), user.get().getPasswordHash())){
             LoginResponse loginResponse = new LoginResponse();
+            loginResponse.setUserId(user.get().getId());
             loginResponse.setUsername(user.get().getUsername());
             loginResponse.setDisplayName(user.get().getDisplayName());
             loginResponse.setEmail(user.get().getEmail());

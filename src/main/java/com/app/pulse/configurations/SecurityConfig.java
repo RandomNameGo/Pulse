@@ -34,7 +34,8 @@ public class SecurityConfig {
                                 "/webjars/**"
                         ).permitAll()
                         .requestMatchers("/pulse/api/v1/auth/**").permitAll()
-                        .requestMatchers("/pulse/api/v1/user/**").permitAll()
+                        .requestMatchers("/pulse/api/v1/user/verify").permitAll()
+                        .requestMatchers("/pulse/api/v1/user/register").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder()).

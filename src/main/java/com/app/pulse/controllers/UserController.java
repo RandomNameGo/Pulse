@@ -3,12 +3,16 @@ package com.app.pulse.controllers;
 
 import com.app.pulse.dto.request.CreateUserRequest;
 import com.app.pulse.dto.response.ApiResponse;
+import com.app.pulse.dto.response.UserResponse;
 import com.app.pulse.services.EmailService;
 import com.app.pulse.services.OtpService;
 import com.app.pulse.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,6 +51,26 @@ public class UserController {
                 .success(true)
                 .message("Fail")
                 .data("Can't register user")
+                .build()
+        );
+    }
+
+    @PostMapping("/upload-avatar/{userId}")
+    public ResponseEntity<?> uploadAvatar(@RequestParam("file") MultipartFile file, @PathVariable Long userId) throws IOException {
+        return ResponseEntity.ok().body(ApiResponse.<String>builder()
+                .success(true)
+                .message("Success")
+                .data(userService.uploadAvatar(file, userId))
+                .build()
+        );
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUser(@PathVariable Long userId){
+        return ResponseEntity.ok().body(ApiResponse.<UserResponse>builder()
+                .success(true)
+                .message("Success")
+                .data(userService.getUser(userId))
                 .build()
         );
     }
