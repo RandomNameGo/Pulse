@@ -44,11 +44,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ApiResponse<String>> handleAccessDeniedException() {
+    public ResponseEntity<ApiResponse<String>> handleAccessDeniedException(AccessDeniedException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.<String>builder()
                 .success(false)
                 .message("Forbidden")
-                .data("You do not have permission to access this feature!")
+                .data(e.getMessage())
                 .error("403")
                 .build());
     }

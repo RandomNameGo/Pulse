@@ -3,9 +3,13 @@ package com.app.pulse.services;
 import com.app.pulse.models.User;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -32,6 +36,7 @@ public class JwtService {
             Date exp = new Date(now.getTime() + validityInMs);
             JWTClaimsSet claims = new JWTClaimsSet.Builder()
                     .subject(user.getUsername())
+                    .claim("userId", user.getId())
                     .issuer("pulse.com")
                     .issueTime(now)
                     .expirationTime(exp)
@@ -46,5 +51,38 @@ public class JwtService {
         } catch (JOSEException e) {
             throw new RuntimeException("Cannot generate JWT", e);
         }
+    }
+
+    public String getCurrentToken() {
+        ServletRequestAttributes attributes =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+        if (attributes == null) return null;
+
+        HttpServletRequest request = attributes.getRequest();
+
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+
+        return null;
+    }
+
+    private JWTClaimsSet extractAllClaims(String token) {
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            signedJWT.verify(new MACVerifier(getSecretKey()));
+            return signedJWT.getJWTClaimsSet();
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid JWT token", e);
+        }
+    }
+
+    public Long extractUserId(String token) {
+        Object idObj = extractAllClaims(token).getClaim("userId");
+        if (idObj == null) return null;
+        return Long.parseLong(idObj.toString());
     }
 }

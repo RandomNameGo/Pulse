@@ -2,9 +2,11 @@ package com.app.pulse.services;
 
 import com.app.pulse.dto.request.CreateUserRequest;
 import com.app.pulse.dto.response.UserResponse;
+import com.app.pulse.mappers.UserMapper;
 import com.app.pulse.models.User;
 import com.app.pulse.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +25,10 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final CloudinaryService cloudinaryService;
+
+    private final UserMapper userMapper;
+
+    private final JwtService jwtService;
 
     @Override
     public String createUser(CreateUserRequest userRequest) {
@@ -53,6 +59,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String uploadAvatar(MultipartFile file, long userId) throws IOException{
+
+        String token = jwtService.getCurrentToken();
+
+        Long currentUserId = jwtService.extractUserId(token);
+
+        if(currentUserId != userId){
+            throw new AccessDeniedException("You dont have permission to access this user");
+        }
+
         Optional<User> user = userRepository.findById(userId);
         if(user.isPresent()) {
             String avatarUrl = cloudinaryService.uploadFile(file);
@@ -66,19 +81,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUser(long userId) {
 
-        Optional<User> user = userRepository.findById(userId);
+        String token = jwtService.getCurrentToken();
 
-        if(user.isPresent()) {
-            UserResponse userResponse = new UserResponse();
-            userResponse.setUserId(user.get().getId());
-            userResponse.setUsername(user.get().getUsername());
-            userResponse.setDisplayName(user.get().getDisplayName());
-            userResponse.setEmail(user.get().getEmail());
-            userResponse.setTag(user.get().getTag());
-            userResponse.setAvatarUrl(user.get().getAvatarUrl());
-            return userResponse;
+        Long currentUserId = jwtService.extractUserId(token);
+
+        if(currentUserId != userId){
+            throw new AccessDeniedException("You dont have permission to access this user");
         }
 
-        return null;
+        Optional<User> user = userRepository.findById(userId);
+
+        return user.map(userMapper::toUserResponse).orElse(null);
+
     }
 }
