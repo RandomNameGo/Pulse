@@ -1,6 +1,9 @@
 package com.app.pulse.services;
 
 
+import com.app.pulse.dto.response.ServerResponse;
+import com.app.pulse.mappers.ServerMapper;
+import com.app.pulse.mappers.UserMapper;
 import com.app.pulse.models.Server;
 import com.app.pulse.models.ServerMember;
 import com.app.pulse.models.User;
@@ -13,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,6 +33,10 @@ public class ServerServiceImpl implements ServerService {
     private final JwtService jwtService;
 
     private final CloudinaryService cloudinaryService;
+
+    private final UserMapper userMapper;
+
+    private final ServerMapper serverMapper;
 
     @Override
     public String createServer(MultipartFile icon, String serverName) throws IOException {
@@ -45,10 +54,12 @@ public class ServerServiceImpl implements ServerService {
 
         Server server = new Server();
 
-        String iconUrl = cloudinaryService.uploadFile(icon);
+        if(!icon.isEmpty()){
+            String iconUrl = cloudinaryService.uploadFile(icon);
+            server.setIconUrl(iconUrl);
+        }
 
         server.setName(serverName);
-        server.setIconUrl(iconUrl);
         server.setOwner(owner);
         server.setCreatedAt(Instant.now());
         serverRepository.save(server);
@@ -62,5 +73,26 @@ public class ServerServiceImpl implements ServerService {
         serverMemberRepository.save(serverMember);
 
         return "Created server successfully";
+    }
+
+    @Override
+    public List<ServerResponse> getServers() {
+
+        String token = jwtService.getCurrentToken();
+
+        long currentUserId = jwtService.extractUserId(token);
+
+        List<Server> servers = serverRepository.findByUserId(currentUserId);
+
+        List<ServerResponse> serverResponses = new ArrayList<>();
+
+        for (Server server : servers) {
+            ServerResponse serverResponse = serverMapper.toServerResponse(server);
+            User owner = server.getOwner();
+            serverResponse.setOwner(userMapper.toUserResponse(owner));
+            serverResponses.add(serverResponse);
+        }
+
+        return serverResponses;
     }
 }
