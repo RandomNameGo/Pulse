@@ -19,7 +19,7 @@ public class ServerController {
     private final ServerService serverService;
 
     @PostMapping("/server")
-    public ResponseEntity<?> createServer(@RequestParam(value = "file", required = false) MultipartFile file, @RequestParam("server name") String serverName) throws IOException {
+    public ResponseEntity<?> createServer(@RequestParam(value = "file", required = false) MultipartFile file, @RequestParam("server_name") String serverName) throws IOException {
         return ResponseEntity.ok().body(ApiResponse.<String>builder()
                 .success(true)
                 .message("Success")

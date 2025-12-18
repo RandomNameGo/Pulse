@@ -38,7 +38,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     private final JwtService jwtService;
 
     @Override
-    public DirectConversation getOrCreateConversation(Long userAId, Long userBId) {
+    public DirectConversation getOrCreateConversation(long userAId, long userBId) {
 
         long uId1 = Math.min(userAId, userBId);
         long uId2 = Math.max(userAId, userBId);
@@ -59,7 +59,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
 
     @Override
     @Transactional
-    public DirectMessageResponse sendMessage(Long senderId, Long receiverId, String content) {
+    public void sendMessage(long senderId, long receiverId, String content) {
 
         DirectConversation conversation = getOrCreateConversation(senderId, receiverId);
 
@@ -81,8 +81,6 @@ public class DirectMessageServiceImpl implements DirectMessageService {
                 "/topic/dm/" + conversation.getId(),
                 response
         );
-
-        return response;
     }
 
     @Override
@@ -109,26 +107,19 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     }
 
     @Override
-    public List<DirectMessageResponse> getConversationMessage(Long conversationId, int page, int size) {
+    public List<DirectMessageResponse> getConversationMessage(long conversationId, int page, int size) {
 
         Pageable paging = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
-        // 2. GỌI REPOSITORY
         Page<DirectMessage> pageResult = directMessageRepository.findByConversationId(conversationId, paging);
 
-        // 3. CONVERT ENTITY -> DTO
-        // Lấy list entity ra khỏi pageResult
+
         List<DirectMessage> entities = pageResult.getContent();
 
-        // Map từng phần tử sang DTO
         List<DirectMessageResponse> responses = entities.stream()
-                .map(this::convertToDto) // Gọi hàm mapper bên dưới
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
 
-        // 4. ĐẢO NGƯỢC LIST (QUAN TRỌNG)
-        // Vì bước 1 ta sort DESC (Tin mới ở đầu: [Tin mới, ..., Tin cũ])
-        // Nhưng Frontend chat cần hiển thị theo thời gian xuôi (Tin cũ ở trên, Tin mới ở dưới).
-        // Nên ta đảo ngược lại thành: [Tin cũ, ..., Tin mới]
         Collections.reverse(responses);
 
         return responses;

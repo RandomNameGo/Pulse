@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface DirectMessageService {
 
-    DirectConversation getOrCreateConversation(Long userAId, Long userBId);
+    DirectConversation getOrCreateConversation(long userAId, long userBId);
 
-    DirectMessageResponse sendMessage(Long senderId, Long receiverId, String content);
+    void sendMessage(long senderId, long receiverId, String content);
 
     List<DirectConversationResponse> getUserConversations();
 
-    List<DirectMessageResponse> getConversationMessage(Long conversationId, int page, int size);
+    List<DirectMessageResponse> getConversationMessage(long conversationId, int page, int size);
 }

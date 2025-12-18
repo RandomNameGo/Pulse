@@ -16,7 +16,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUsername(String username);
 
-    @Query("select s.user from ServerMember s where s.server.id = :serverId")
-    List<User> findByServer(long serverId);
+    @Query("select sm.user from ServerMember sm where sm.server.id = :serverId")
+    List<User> findByServer(Long serverId);
 
+    @Query("select sm.user from ServerMember sm where sm.user.id = :userId and sm.server.id = :serverId and sm.role = 'SERVER_ADMIN'")
+    Optional<User> isServerAdmin(Long userId, Long serverId);
 }

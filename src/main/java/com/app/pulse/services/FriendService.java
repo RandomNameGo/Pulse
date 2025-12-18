@@ -9,9 +9,9 @@ public interface FriendService {
 
     String sendFriendRequest(String userName);
 
-    String acceptFriendRequest(Long friendRequestId);
+    String acceptFriendRequest(long friendRequestId);
 
-    String rejectFriendRequest(Long friendRequestId);
+    String rejectFriendRequest(long friendRequestId);
 
     List<FriendRequestResponse> getFriendRequests();
 }

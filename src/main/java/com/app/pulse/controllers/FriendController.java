@@ -11,12 +11,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/pulse/api/v1/friend")
+@RequestMapping("/pulse/api/v1")
 public class FriendController {
 
     private final FriendService friendService;
 
-    @PostMapping("/send-friend-request")
+    @PostMapping("/friend/send-friend-request")
     public ResponseEntity<?> sendFriendRequest(@RequestParam("username") String username) {
         return ResponseEntity.ok().body(ApiResponse.<String>builder()
                 .success(true)
@@ -26,7 +26,7 @@ public class FriendController {
         );
     }
 
-    @PostMapping("/accept-friend-request")
+    @PostMapping("/friend/accept-friend-request")
     public ResponseEntity<?> acceptFriendRequest(@RequestParam("requestId") long requestId) {
         return ResponseEntity.ok().body(ApiResponse.<String>builder()
                 .success(true)
@@ -36,7 +36,7 @@ public class FriendController {
         );
     }
 
-    @PostMapping("/reject-friend-request")
+    @PostMapping("/friend/reject-friend-request")
     public ResponseEntity<?> rejectFriendRequest(@RequestParam("requestId") long requestId) {
         return ResponseEntity.ok().body(ApiResponse.<String>builder()
                 .success(true)
@@ -46,7 +46,7 @@ public class FriendController {
         );
     }
 
-    @GetMapping("/show-friend-request")
+    @GetMapping("/friend/show-friend-request")
     public ResponseEntity<?> getFriendRequests() {
         return ResponseEntity.ok().body(ApiResponse.<List<FriendRequestResponse>>builder()
                 .success(true)

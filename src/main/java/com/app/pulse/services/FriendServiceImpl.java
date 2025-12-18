@@ -72,7 +72,7 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     @Transactional
-    public String acceptFriendRequest(Long friendRequestId) {
+    public String acceptFriendRequest(long friendRequestId) {
 
         String token = jwtService.getCurrentToken();
 
@@ -106,7 +106,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public String rejectFriendRequest(Long friendRequestId) {
+    public String rejectFriendRequest(long friendRequestId) {
         String token = jwtService.getCurrentToken();
 
         long receiverId = jwtService.extractUserId(token);

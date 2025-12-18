@@ -12,7 +12,7 @@ public interface DirectConversationRepository extends JpaRepository<DirectConver
     Optional<DirectConversation> findByUser1IdAndUser2Id(Long user1Id, Long user2Id);
 
     @Query("select c from DirectConversation c where c.user1.id = :userId or c.user2.id = :userId order by c.updatedAt desc")
-    List<DirectConversation> findByUserId(long userId);
+    List<DirectConversation> findByUserId(Long userId);
 
     DirectConversation findTopByOrderByIdDesc();
 }

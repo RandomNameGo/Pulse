@@ -13,12 +13,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/pulse/api/v1/chat")
+@RequestMapping("/pulse/api/v1")
 public class MessageController {
 
     private final DirectMessageService directMessageService;
 
-    @GetMapping("/conversation")
+    @GetMapping("/chat/conversation")
     public ResponseEntity<?> getUserConversation() {
         return ResponseEntity.ok().body(ApiResponse.<List<DirectConversationResponse>>builder()
                 .success(true)
@@ -28,7 +28,7 @@ public class MessageController {
         );
     }
 
-    @GetMapping("/messages/{conversationId}")
+    @GetMapping("/chat/messages/{conversationId}")
     public ResponseEntity<?> getConversationMessage(
             @PathVariable Long conversationId,
             @RequestParam(defaultValue = "0") int page,
