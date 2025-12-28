@@ -1,6 +1,7 @@
 package com.app.pulse.services;
 
 import com.app.pulse.dto.request.CreateUserRequest;
+import com.app.pulse.dto.response.CreateUserWithoutVerifyRequest;
 import com.app.pulse.dto.response.UserResponse;
 import com.app.pulse.mappers.UserMapper;
 import com.app.pulse.models.User;
@@ -93,5 +94,32 @@ public class UserServiceImpl implements UserService {
 
         return user.map(userMapper::toUserResponse).orElse(null);
 
+    }
+
+    @Override
+    public String createUserWithoutVerify(CreateUserWithoutVerifyRequest userRequest) {
+
+        if(userRepository.existsByDisplayName(userRequest.getDisplayName())) {
+            return "Display name is unavailable";
+        }
+
+        if(userRepository.existsByEmail(userRequest.getEmail())) {
+            return "This Email was used to register user";
+        }
+
+        String encodedPassword = passwordEncoder.encode(userRequest.getPassword());
+
+        String tag = String.valueOf(new Random().nextInt(9999));
+
+        User user = new User();
+        user.setUsername(userRequest.getUsername());
+        user.setDisplayName(userRequest.getDisplayName());
+        user.setEmail(userRequest.getEmail());
+        user.setPasswordHash(encodedPassword);
+        user.setTag(tag);
+        user.setCreatedAt(Instant.now());
+        userRepository.save(user);
+
+        return "Created user '" + userRequest.getUsername() + "' successfully";
     }
 }

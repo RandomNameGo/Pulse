@@ -1,6 +1,7 @@
 package com.app.pulse.services;
 
 import com.app.pulse.dto.request.CreateUserRequest;
+import com.app.pulse.dto.response.CreateUserWithoutVerifyRequest;
 import com.app.pulse.dto.response.UserResponse;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,4 +13,7 @@ public interface UserService {
     String uploadAvatar(MultipartFile file, long userId) throws IOException;
 
     UserResponse getUser(long userId);
+
+    String createUserWithoutVerify(CreateUserWithoutVerifyRequest userRequest);
+
 }

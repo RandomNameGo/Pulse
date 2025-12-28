@@ -3,6 +3,7 @@ package com.app.pulse.controllers;
 
 import com.app.pulse.dto.request.CreateUserRequest;
 import com.app.pulse.dto.response.ApiResponse;
+import com.app.pulse.dto.response.CreateUserWithoutVerifyRequest;
 import com.app.pulse.dto.response.UserResponse;
 import com.app.pulse.services.EmailService;
 import com.app.pulse.services.OtpService;
@@ -54,6 +55,17 @@ public class UserController {
                 .data("Can't register user")
                 .build()
         );
+    }
+
+    @PostMapping("/user/register-no-verify")
+    public ResponseEntity<?> registerWithoutVerify(@RequestBody @Valid CreateUserWithoutVerifyRequest request) {
+            return ResponseEntity.ok().body(ApiResponse.<String>builder()
+                    .success(true)
+                    .message("Success")
+                    .data(userService.createUserWithoutVerify(request))
+                    .build()
+            );
+
     }
 
     @PostMapping("/user/upload-avatar/{userId}")

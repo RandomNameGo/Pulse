@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/pulse/api/v1/auth/**").permitAll()
                         .requestMatchers("/pulse/api/v1/user/verify").permitAll()
                         .requestMatchers("/pulse/api/v1/user/register").permitAll()
+                        .requestMatchers("/pulse/api/v1/user/register-no-verify").permitAll()
                         .requestMatchers("/pulse/api/v1/chat/**").permitAll()
                         .anyRequest().authenticated()
                 )
